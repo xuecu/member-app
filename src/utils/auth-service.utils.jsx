@@ -1,7 +1,7 @@
 import ObjectToQueryString from './object-to-query-string.utils';
 
 const apiUrl =
-	'https://script.google.com/macros/s/AKfycbyvdYT4vI8srA5zOXyYKpnYMBOHJ33IuYsXTl2rtmW5NOOHO_MzpunsKqqY5XMv-Kwa/exec';
+	'https://script.google.com/macros/s/AKfycbxyQpNBcjx-oM1X-lu84BppcsxC5MlJE6L1BQYT8aaLMy8tlbN1m7EToGMSnu4nhz9V/exec';
 
 // **通用 API 請求函式**
 async function SendRequest(data) {
