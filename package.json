@@ -1,0 +1,42 @@
+{
+	"name": "member-app",
+	"version": "0.1.0",
+	"homepage": "https://https://xuecu.github.io/member-app/build",
+	"private": true,
+	"dependencies": {
+		"@apollo/client": "^3.12.10",
+		"antd": "^5.23.3",
+		"cra-template": "1.2.0",
+		"dayjs": "^1.11.13",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
+		"react-router-dom": "^7.1.5",
+		"react-scripts": "5.0.1",
+		"styled-components": "^6.1.14",
+		"uuid": "^11.0.5"
+	},
+	"scripts": {
+		"start": "react-scripts start",
+		"build": "react-scripts build",
+		"test": "react-scripts test",
+		"eject": "react-scripts eject"
+	},
+	"eslintConfig": {
+		"extends": [
+			"react-app",
+			"react-app/jest"
+		]
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
+	}
+}
