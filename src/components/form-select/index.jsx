@@ -1,4 +1,4 @@
-import { FormSelectLabel, Group, Select } from './form-select.styled';
+import { FormSelectLabel, Group, Select } from './styled';
 
 const FormSelect = ({ label, selectOptions, ...otherProps }) => {
 	return (

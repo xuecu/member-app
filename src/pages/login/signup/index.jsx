@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import SendRequest from '../../../utils/auth-service.utils';
-import Loading from '../../../components/loading/loading.components';
-import FormInput from '../../../components/form-input/form-input.component';
-import Button from '../../../components/button/button.component';
+import Loading from '../../../components/loading';
+import FormInput from '../../../components/form-input';
+import Button from '../../../components/button';
+import UID from '../../../utils/uid.utils';
 import dayjs from 'dayjs';
 
 import styled from 'styled-components';
@@ -22,39 +23,29 @@ const MessageStyled = styled.span`
 	color: red;
 `;
 
-function SignIn({ loading, setLoading, navigate }) {
+function SignUp({ loading, setLoading }) {
 	const [email, setEmail] = useState('');
 	const [message, setMessage] = useState('');
 
-	const handleSignIn = async () => {
+	const handleSignUp = async () => {
 		if (!email) {
 			setMessage('請輸入信箱');
 			return;
 		}
+		if (loading) return alert('Please be patient. wait a few minutes.');
 
 		setLoading(true);
 		setMessage('');
 
 		const data = {
-			do: 'signin',
+			do: 'signup',
+			uid: UID(dayjs()), // 生成唯一 UID
 			mail: email,
-			timestamp: dayjs().format('YYYY-MM-DD HH:mm:ss'),
 		};
 
 		try {
 			const result = await SendRequest(data);
-			if (result.success) {
-				localStorage.setItem(
-					'memberApp',
-					JSON.stringify({
-						email,
-						login_at: data.timestamp,
-					})
-				);
-				navigate('/dashboard');
-			} else {
-				setMessage('登入失敗，信箱不存在');
-			}
+			setMessage(result.message);
 		} catch (error) {
 			setMessage('發生錯誤，請稍後再試');
 		} finally {
@@ -64,7 +55,7 @@ function SignIn({ loading, setLoading, navigate }) {
 
 	return (
 		<div>
-			<h2>登入</h2>
+			<h2>註冊</h2>
 			<InputGroup>
 				<FormInput
 					label="Email"
@@ -79,14 +70,14 @@ function SignIn({ loading, setLoading, navigate }) {
 				{message && <MessageStyled>{message}</MessageStyled>}
 				<Button
 					type="submit"
-					onClick={handleSignIn}
+					onClick={handleSignUp}
 					disabled={loading}
 				>
-					{loading ? <Loading /> : '登入'}
+					{loading ? <Loading /> : '註冊'}
 				</Button>
 			</InputGroup>
 		</div>
 	);
 }
 
-export default SignIn;
+export default SignUp;

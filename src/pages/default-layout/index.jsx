@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import Navigator from './navigator.pages';
+import Navigator from './navigator';
 import Resize from '../../utils/resize.utils';
 import { MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
 import { Outlet } from 'react-router-dom';
-import { DefaultStyled, HeaderStyled, ContentStyled } from './default-layout.styled';
+import { DefaultStyled, HeaderStyled, ContentStyled } from './styled';
 
 // import styled from 'styled-components';
 

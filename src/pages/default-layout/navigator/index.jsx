@@ -1,12 +1,6 @@
 // import { Fragment } from 'react';
 import { useNavigate } from 'react-router-dom';
-import {
-	NavigatorStyled,
-	LinkStyled,
-	LogoutButton,
-	GroupStyled,
-	MemberStyled,
-} from './navigator.styled';
+import { NavigatorStyled, LinkStyled, LogoutButton, GroupStyled, MemberStyled } from './styled';
 
 // import styled from 'styled-components';
 

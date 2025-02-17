@@ -1,4 +1,4 @@
-import { FormInputLabel, Group, Input } from './form-input.styled';
+import { FormInputLabel, Group, Input } from './styled';
 
 const FormInput = ({ label, inputOption }) => {
 	return (

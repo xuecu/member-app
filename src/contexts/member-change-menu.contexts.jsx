@@ -4,6 +4,7 @@ export const MemberChangeMenuContext = createContext({
 	formFields: [],
 	handleChange: () => {},
 	handleReset: () => {},
+	handleTab: () => {},
 	memberData: {},
 	setMemberData: () => {},
 });
@@ -11,13 +12,17 @@ export const MemberChangeMenuContext = createContext({
 const defaultFormFields = {
 	email: '',
 	brand: 'xuemi',
-	category: 'leave',
+	category: 'search',
+	tab: '',
 };
 
 export const MemberChangeMenuProvider = ({ children }) => {
 	const [formFields, setFormFields] = useState(defaultFormFields);
 	const [memberData, setMemberData] = useState({});
 
+	const handleTab = (name) => {
+		setFormFields({ ...formFields, tab: name || formFields.category });
+	};
 	const handleChange = (event) => {
 		const { name, value } = event.target;
 		setFormFields({ ...formFields, [name]: value });
@@ -29,6 +34,7 @@ export const MemberChangeMenuProvider = ({ children }) => {
 		formFields,
 		handleChange,
 		handleReset,
+		handleTab,
 		memberData,
 		setMemberData,
 	};

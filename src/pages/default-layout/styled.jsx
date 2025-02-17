@@ -5,6 +5,7 @@ export const DefaultStyled = styled.div`
 	height: 100vh;
 	display: flex;
 	flex-direction: ${(prop) => (prop.$column ? 'column' : 'row')};
+	overflow-y: scroll;
 `;
 
 export const HeaderStyled = styled.div`

@@ -7,7 +7,7 @@ google sign in button
 
 */
 
-import { BaseButton, GoogleSignInButton, InvertedButton } from './button.styled';
+import { BaseButton, GoogleSignInButton, InvertedButton } from './styled';
 
 export const BUTTON_TYPES_CLASSES = {
 	base: 'base',

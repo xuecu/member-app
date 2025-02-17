@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
 export const NavigatorStyled = styled.div`
-	width: ${(props) => (props.$collapsed ? '10%' : '0px')};
-	max-width: 200px;
+	${(props) =>
+		props.$collapsed ? `width: 10%; max-width: 200px; min-width: 80px;` : `width: 0px;`}
 	height: 100vh;
 	display: flex;
 	padding: 30px 0;
@@ -37,7 +37,6 @@ export const LogoutButton = styled.div`
 		border-bottom: 1px black solid;
 	}
 `;
-
 export const GroupStyled = styled.div`
 	display: flex;
 	flex-direction: column;
