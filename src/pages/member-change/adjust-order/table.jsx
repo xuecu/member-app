@@ -86,6 +86,7 @@ const OrderProductInfo = ({ collapsedItems, orderProducts, orderKey, data, formF
 		setProductStartAt(initialProductStartAt);
 	};
 	const sendAdjustOrder = async () => {
+		setLoading(true);
 		const filterOrderProducts = orderProducts.filter(
 			(product) => !dayjs(product.ended_at).isSame(dayjs(productStartAt[product.id]))
 		);
@@ -93,25 +94,45 @@ const OrderProductInfo = ({ collapsedItems, orderProducts, orderKey, data, formF
 			...product,
 			ended_at: `${formatDayjs(productStartAt[product.id])}`,
 		}));
-		const newFeed = {
-			do: 'adjust-order-change',
-			brand: formField.brand,
-			mail: formField.email,
-			variables: JSON.stringify(NewOrderProducts),
-			staffMail: JSON.parse(localStorage.getItem('memberApp')).email,
-		};
-		setLoading(true);
+		const batches = [];
+		const BATCH_SIZE = 10; // 每批次 10 筆
 
-		try {
-			const result = await SafeFetch(
-				() => SendRequest(newFeed),
-				'adjust-order-change failed'
-			);
-			if (!result.success) throw new Error('變更失敗');
-		} catch (error) {
-			console.error('訂單變更失敗:', error);
+		if (NewOrderProducts.length > 10) {
+			for (let i = 0; i < NewOrderProducts.length; i += BATCH_SIZE) {
+				batches.push(NewOrderProducts.slice(i, i + BATCH_SIZE));
+			}
+		} else {
+			batches.push(NewOrderProducts);
 		}
 
+		const sendAllBatches = async () => {
+			setLoading(true);
+			for (const batch of batches) {
+				await sendBatch(batch); // 等待每批完成後再發送下一批
+			}
+			setLoading(false);
+		};
+		const sendBatch = async (batch) => {
+			const newFeed = {
+				do: 'adjust-order-change',
+				brand: formField.brand,
+				mail: formField.email,
+				variables: JSON.stringify(batch),
+				staffMail: JSON.parse(localStorage.getItem('memberApp')).email,
+			};
+
+			try {
+				const result = await SafeFetch(
+					() => SendRequest(newFeed),
+					'adjust-order-change failed'
+				);
+				if (!result.success) throw new Error('變更失敗');
+			} catch (error) {
+				console.error('訂單變更失敗:', error);
+			}
+		};
+
+		await sendAllBatches();
 		setLoading(false);
 	};
 
