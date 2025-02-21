@@ -198,6 +198,7 @@ const LeaveInfo = ({
 		if (data.state === 'DELETED') return true;
 		if (data.state === 'SUCCESS') return false;
 	};
+	const diffDays = value.endedAt.diff(value.startedAt, 'day');
 	return (
 		<TableRow>
 			<Col
@@ -248,6 +249,27 @@ const LeaveInfo = ({
 					onChange={(e) => handleChange('reason', e.target.value)}
 					disabled={HandlerDiable(data)}
 				/>
+			</Col>
+			<Col
+				style={
+					isNew
+						? {
+								alignItems: 'end',
+								display: 'flex',
+								gap: '5px',
+								justifyContent: 'center',
+								flex: '0.5',
+						  }
+						: {
+								alignItems: 'center',
+								display: 'flex',
+								gap: '5px',
+								justifyContent: 'center',
+								flex: '0.5',
+						  }
+				}
+			>
+				<span>{diffDays + 1}</span>天
 			</Col>
 			<Col
 				style={{ alignSelf: 'end', display: 'flex', gap: '5px', justifyContent: 'center' }}
