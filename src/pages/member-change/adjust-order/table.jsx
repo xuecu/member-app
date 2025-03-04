@@ -32,14 +32,14 @@ const getOrderInfo = (order) => {
 
 	let orderProducts = order.order_products;
 
-	if (orderProducts.length === 0) return [];
 	return {
-		orderProducts: orderProducts,
+		orderProducts: orderProducts.length === 0 ? [] : orderProducts,
 		orderCreateAt: order.created_at,
 		orderState: order.status,
 	};
 };
 const sortDataBycreatAt = (data) => {
+	if (data) return data;
 	return data.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
 };
 
@@ -135,7 +135,8 @@ const OrderProductInfo = ({ collapsedItems, orderProducts, orderKey, data, formF
 		await sendAllBatches();
 		setLoading(false);
 	};
-
+	if (orderProducts.length === 0)
+		return <OrderBody $collapse={collapsedItems[orderKey]}>無訂單資料</OrderBody>;
 	return (
 		<OrderBody $collapse={collapsedItems[orderKey]}>
 			<TableHead>
