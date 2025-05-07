@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "//xuecu.github.io/member-app/build/static/css/main.3ce23c5e.css",
-    "main.js": "//xuecu.github.io/member-app/build/static/js/main.c891a953.js",
+    "main.js": "//xuecu.github.io/member-app/build/static/js/main.5f6eaa3d.js",
     "index.html": "//xuecu.github.io/member-app/build/index.html",
     "main.3ce23c5e.css.map": "//xuecu.github.io/member-app/build/static/css/main.3ce23c5e.css.map",
-    "main.c891a953.js.map": "//xuecu.github.io/member-app/build/static/js/main.c891a953.js.map"
+    "main.5f6eaa3d.js.map": "//xuecu.github.io/member-app/build/static/js/main.5f6eaa3d.js.map"
   },
   "entrypoints": [
     "static/css/main.3ce23c5e.css",
-    "static/js/main.c891a953.js"
+    "static/js/main.5f6eaa3d.js"
   ]
 }
