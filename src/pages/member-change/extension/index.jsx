@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { MemberChangeMenuContext } from '../../../contexts/member-change-menu.contexts';
-import Table from './table';
+import { MemberChangeMenuContext } from '@contexts/member-change-menu.contexts';
+import Table from '../table';
 import styled from 'styled-components';
 
 const ExtensionContainer = styled.div`
@@ -10,15 +10,12 @@ const ExtensionContainer = styled.div`
 `;
 
 function Extension() {
-	const { formFields, memberData = {}, setMemberData } = useContext(MemberChangeMenuContext);
+	const { memberData = {} } = useContext(MemberChangeMenuContext);
 	return (
 		<ExtensionContainer>
 			<Table
-				formField={formFields}
-				title="合約"
-				type="contract"
+				type="extension"
 				data={memberData || {}}
-				setData={setMemberData}
 			/>
 		</ExtensionContainer>
 	);

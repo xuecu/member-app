@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useState, useEffect, Fragment } from 'react';
+import CombinedProvider from './combined-provider';
 import dayjs from 'dayjs';
 
 // 檢查使用者是否已登入
@@ -18,8 +19,13 @@ const isAuthenticated = () => {
 	return true;
 };
 
+/**
+ * @param {children} ReactNode 要呈現的內容
+ * @param {providers} Array 要包住的 context provider 陣列
+ */
+
 // 受保護的路由：未登入則導向 /login
-function ProtectedRoute({ children }) {
+function ProtectedRoute({ children, providers = [] }) {
 	const [showMessage, setShowMessage] = useState(false);
 	const [redirect, setRedirect] = useState(false);
 
@@ -45,7 +51,7 @@ function ProtectedRoute({ children }) {
 		);
 	}
 
-	return (
+	const content = (
 		<Fragment>
 			{showMessage && (
 				<div style={{ color: 'red', textAlign: 'center', margin: '20px' }}>
@@ -54,6 +60,12 @@ function ProtectedRoute({ children }) {
 			)}
 			{isAuthenticated() ? children : null}
 		</Fragment>
+	);
+
+	return providers.length > 0 ? (
+		<CombinedProvider providers={providers}>{content}</CombinedProvider>
+	) : (
+		content
 	);
 }
 

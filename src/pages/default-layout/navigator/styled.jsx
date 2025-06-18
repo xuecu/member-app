@@ -22,6 +22,7 @@ export const LinkStyled = styled(Link)`
 	white-space: nowrap;
 	text-decoration: none;
 	color: black;
+	${({ $order }) => $order && `order : ${$order};`}
 	border-bottom: 1px transparent solid;
 	&:hover {
 		border-bottom: 1px black solid;

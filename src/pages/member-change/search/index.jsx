@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
-import { MemberChangeMenuContext } from '../../../contexts/member-change-menu.contexts';
-import Table from './table';
+import { MemberChangeMenuContext } from '@contexts/member-change-menu.contexts';
+import Table from '../table';
 import styled from 'styled-components';
 
 const SearchContainer = styled.div`
@@ -15,14 +15,12 @@ function Search() {
 	return (
 		<SearchContainer>
 			<Table
-				title="合約"
 				type="contract"
 				data={memberData.contracts || []}
 			/>
 			<Table
-				title="訂單"
-				type="order_log"
-				data={memberData.order_log || []}
+				type="order-log"
+				data={memberData.order_logs || []}
 			/>
 		</SearchContainer>
 	);

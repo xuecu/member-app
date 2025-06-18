@@ -2,6 +2,8 @@ import React, { createContext, useState } from 'react';
 
 export const MemberChangeMenuContext = createContext({
 	formFields: [],
+	submitForm: [],
+	setSubmitForm: () => {},
 	handleChange: () => {},
 	handleReset: () => {},
 	handleTab: () => {},

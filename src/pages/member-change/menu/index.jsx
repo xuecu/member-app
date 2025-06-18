@@ -1,12 +1,11 @@
 import React, { useState, useContext } from 'react';
-import SendRequest from '../../../utils/auth-service.utils';
-import FormInput from '../../../components/form-input';
-import FormSelect from '../../../components/form-select';
-import Button from '../../../components/button';
-import Loading from '../../../components/loading';
-import SafeFetch from '../../../utils/safe-fetch.utils';
-import { MemberChangeMenuContext } from '../../../contexts/member-change-menu.contexts';
-import FakeData from '../../../fake-data';
+import { MemberChangeMenuContext } from '@contexts/member-change-menu.contexts';
+
+import SendRequest from '@utils/auth-service.utils';
+import { FormInput, FormSelect } from '@/components/input';
+import Button from '@components/button';
+import { Loading } from '@components/loading';
+import SafeFetch from '@utils/safe-fetch.utils';
 import {
 	MemberChangeStyled,
 	FormGroupStyled,
@@ -48,20 +47,31 @@ function Menu() {
 			setMessage('請填寫完整資料');
 			return;
 		}
-		setLoading(true);
 		setMessage('');
 		handleTab('');
+		if (category === 'adjust-coupon') {
+			if (brand === 'sixdigital' || brand === 'kkschool') {
+				handleTab();
+				return;
+			}
+		}
+		if (category === 'adjust-coin') {
+			if (brand !== 'xuemi') {
+				handleTab();
+				return;
+			}
+		}
+		setLoading(true);
 		setMemberData({});
 		const errors = [];
-
 		try {
 			// 抓取 memberid
 			const getData = {
-				do: 'search',
+				do: 'memberChangeGet',
 				category: category,
 				mail: email,
 				brand: brand,
-				staffMail: JSON.parse(localStorage.getItem('memberApp')).email,
+				staffMail: JSON.parse(localStorage.getItem('memberApp')).mail,
 			};
 
 			const result = await SafeFetch(() => SendRequest(getData), 'search not found');
@@ -131,34 +141,23 @@ function Menu() {
 					>
 						{loading ? <Loading /> : '清除'}
 					</Button>
-					<Button
-						type="submit"
-						onClick={() => {
-							handleTab();
-							setMemberData(FakeData);
-						}}
-						disabled={loading}
-					>
-						{loading ? <Loading /> : '測試'}
-					</Button>
 					{message && <MessageStyled>{message}</MessageStyled>}
 				</FormGroupStyled>
 			</MemberChangeStyled>
-			<MemberInfoContainer>
-				{memberData?.member?.name && <MemberName>{memberData.member.name}</MemberName>}
-
-				{memberData?.member && (
+			{memberData.hasOwnProperty('member') && (
+				<MemberInfoContainer>
+					<MemberName>{memberData.member.name}</MemberName>
 					<span>
 						<AdminLink
-							to={brands.find((e) => e.value === brand)?.page + memberData.member.id}
+							to={brands.find((e) => e.value === brand).page + memberData.member.id}
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							後台
 						</AdminLink>
 					</span>
-				)}
-			</MemberInfoContainer>
+				</MemberInfoContainer>
+			)}
 		</div>
 	);
 }

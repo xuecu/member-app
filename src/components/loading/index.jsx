@@ -1,23 +1,5 @@
-import React from 'react';
-import styled, { keyframes } from 'styled-components';
-
-const spin = keyframes`
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-`;
-
-const LoadingSpinner = styled.div`
-	display: inline-block;
-	width: 20px;
-	height: 20px;
-	border: 3px solid rgba(0, 0, 0, 0.2);
-	border-top: 3px solid black;
-	border-radius: 50%;
-	animation: ${spin} 1s linear infinite;
-`;
-
-function Loading() {
-	return <LoadingSpinner></LoadingSpinner>;
-}
-
-export default Loading;
+export { LoadingMessage } from './loading-message';
+export { LoadingOverlay } from './loading-overlay';
+export { LoadingPage } from './loading-page';
+export { Loading } from './loading';
+export { useMessage } from './use-message';

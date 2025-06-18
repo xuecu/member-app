@@ -1,35 +1,58 @@
-// import { Fragment } from 'react';
+import { useContext, useState } from 'react';
+import { AuthContext } from '@contexts/auth.context';
 import { useNavigate } from 'react-router-dom';
+import { Loading } from '@/components/loading';
+
 import { NavigatorStyled, LinkStyled, LogoutButton, GroupStyled, MemberStyled } from './styled';
 
-// import styled from 'styled-components';
-
 function Navigator({ collapsed }) {
+	const { auth, route, member, logout } = useContext(AuthContext);
+	const { router } = auth;
+	const { user_name, mail, login_at } = member;
+	const [loading, setLoading] = useState(true);
 	const navigate = useNavigate();
-	const staffData = JSON.parse(localStorage.getItem('memberApp'));
 
 	// 登出功能
 	const handleLogout = () => {
-		localStorage.removeItem('memberApp');
+		logout();
 		navigate('/login'); // 導向登入頁面
 	};
 
-	return (
-		<NavigatorStyled $collapsed={collapsed}>
-			{staffData ? (
-				<GroupStyled>
-					<MemberStyled>{staffData.email}</MemberStyled>
-					<LogoutButton onClick={handleLogout}>登出</LogoutButton>
-				</GroupStyled>
-			) : (
+	if (!auth.hasOwnProperty('id'))
+		return (
+			<NavigatorStyled $collapsed={collapsed}>
 				<GroupStyled>
 					<LinkStyled to="/login">登入/註冊</LinkStyled>
 				</GroupStyled>
-			)}
+			</NavigatorStyled>
+		);
+
+	return (
+		<NavigatorStyled $collapsed={collapsed}>
 			<GroupStyled>
-				<LinkStyled to="/dashboard/member-change">會員異動</LinkStyled>
-				<LinkStyled to="/dashboard/member-change">會員異動</LinkStyled>
-				<LinkStyled to="/dashboard/member-change">會員異動</LinkStyled>
+				{member.hasOwnProperty('user_name') ? (
+					<MemberStyled>{user_name !== '' ? user_name : '尚未設定'}</MemberStyled>
+				) : (
+					<Loading />
+				)}
+				<LogoutButton onClick={handleLogout}>登出</LogoutButton>
+			</GroupStyled>
+			<GroupStyled>
+				{router &&
+					route &&
+					router.map((id, index) => {
+						const targetroute = route.find((r) => r.key === id);
+						if (!targetroute) return;
+						return (
+							<LinkStyled
+								to={targetroute.route}
+								key={index}
+								$order={targetroute.order}
+							>
+								{targetroute.name}
+							</LinkStyled>
+						);
+					})}
 			</GroupStyled>
 		</NavigatorStyled>
 	);

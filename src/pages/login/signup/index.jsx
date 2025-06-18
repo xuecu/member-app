@@ -1,17 +1,21 @@
 import React, { useState } from 'react';
-import SendRequest from '../../../utils/auth-service.utils';
-import Loading from '../../../components/loading';
-import FormInput from '../../../components/form-input';
-import Button from '../../../components/button';
-import UID from '../../../utils/uid.utils';
-import dayjs from 'dayjs';
-
 import styled from 'styled-components';
 
+import SendRequest from '@utils/auth-service.utils';
+import { Loading, useMessage } from '@components/loading';
+import { FormInput } from '@/components/input';
+import Button from '@components/button';
+
+const SignupContainer = styled.div`
+	display: flex;
+	width: 40%;
+	min-width: 250px;
+	flex-direction: column;
+`;
 const InputGroup = styled.div`
 	display: flex;
 	flex-direction: column;
-	width: 50%;
+	width: 100%;
 	padding-left: 30px;
 	position: relative;
 	padding-top: 20px;
@@ -23,38 +27,72 @@ const MessageStyled = styled.span`
 	color: red;
 `;
 
+const defaultSingUp = {
+	email: '',
+	password: '',
+	showPassword: false,
+	confirmPassword: '',
+	showConfirmPassword: false,
+};
+
 function SignUp({ loading, setLoading }) {
-	const [email, setEmail] = useState('');
-	const [message, setMessage] = useState('');
+	const { messages, handleMessage } = useMessage();
+	const [singUpForm, setSingUpForm] = useState(defaultSingUp);
 
 	const handleSignUp = async () => {
-		if (!email) {
-			setMessage('請輸入信箱');
+		handleMessage({ type: 'reset' });
+
+		if (singUpForm.email === '') {
+			handleMessage({ type: 'error', content: '請輸入信箱' });
 			return;
 		}
-		if (loading) return alert('Please be patient. wait a few minutes.');
+		if (singUpForm.password === '') {
+			handleMessage({ type: 'error', content: '請輸入密碼' });
+			return;
+		}
+		if (singUpForm.confirmPassword === '') {
+			handleMessage({ type: 'error', content: '請輸入再次確認的密碼' });
+			return;
+		}
 
-		setLoading(true);
-		setMessage('');
-
-		const data = {
-			do: 'signup',
-			uid: UID(dayjs()), // 生成唯一 UID
-			mail: email,
-		};
+		if (singUpForm.password !== singUpForm.confirmPassword) {
+			handleMessage({ type: 'error', content: '密碼核對有誤，請重新確認' });
+			return;
+		}
+		if (loading) return;
 
 		try {
+			setLoading(true);
+			handleMessage({ type: 'single' });
+
+			const data = {
+				do: 'signup',
+				mail: singUpForm.email,
+				password: singUpForm.password,
+			};
 			const result = await SendRequest(data);
-			setMessage(result.message);
+			if (!result.success) {
+				handleMessage({ type: 'error', content: `${result.message}` });
+				throw new Error(result.message);
+			}
+			handleMessage({ type: 'single', content: `${result.message}` });
+			handleMessage({ type: 'success' });
 		} catch (error) {
-			setMessage('發生錯誤，請稍後再試');
+			console.error(error);
 		} finally {
 			setLoading(false);
 		}
 	};
+	const handleChanage = (event) => {
+		const { name, value } = event.target;
+		setSingUpForm({ ...singUpForm, [name]: value });
+	};
+	const handleClickChange = (key) => {
+		setSingUpForm({ ...singUpForm, [key]: !singUpForm[key] });
+	};
 
 	return (
-		<div>
+		<SignupContainer>
 			<h2>註冊</h2>
 			<InputGroup>
 				<FormInput
@@ -62,12 +100,38 @@ function SignUp({ loading, setLoading }) {
 					inputOption={{
 						type: 'email',
 						required: true,
-						onChange: (e) => setEmail(e.target.value),
+						onChange: handleChanage,
 						name: 'email',
-						value: email,
+						value: singUpForm.email,
 					}}
 				/>
-				{message && <MessageStyled>{message}</MessageStyled>}
+				<FormInput
+					label="Password"
+					inputOption={{
+						type: singUpForm.showPassword ? 'text' : 'password',
+						required: true,
+						onChange: handleChanage,
+						name: 'password',
+						value: singUpForm.password,
+					}}
+					showToggle={true}
+					showPassword={singUpForm.showPassword}
+					onToggleClick={() => handleClickChange('showPassword')}
+				/>
+				<FormInput
+					label="Confirm Password"
+					inputOption={{
+						type: singUpForm.showConfirmPassword ? 'text' : 'password',
+						required: true,
+						onChange: handleChanage,
+						name: 'confirmPassword',
+						value: singUpForm.confirmPassword,
+					}}
+					showToggle={true}
+					showPassword={singUpForm.showConfirmPassword}
+					onToggleClick={() => handleClickChange('showConfirmPassword')}
+				/>
+				{messages && <MessageStyled>{messages}</MessageStyled>}
 				<Button
 					type="submit"
 					onClick={handleSignUp}
@@ -76,7 +140,7 @@ function SignUp({ loading, setLoading }) {
 					{loading ? <Loading /> : '註冊'}
 				</Button>
 			</InputGroup>
-		</div>
+		</SignupContainer>
 	);
 }
 
