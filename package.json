@@ -1,6 +1,6 @@
 {
 	"name": "member-app",
-	"homepage": "https://https://xuecu.github.io/member-app/build",
+	"homepage": "https://xuecu.github.io/member-app/build",
 	"version": "0.1.0",
 	"private": true,
 	"dependencies": {

@@ -109,9 +109,13 @@ const comfirmStatus = (data) => {
 	if (data.hasOwnProperty('revoked_at') && data.revoked_at !== null) {
 		return false;
 	}
+	if (data.hasOwnProperty('agreed_at') && data.agreed_at === null) {
+		return false;
+	}
 	if (data.hasOwnProperty('status') && data.status !== 'SUCCESS') {
 		return false;
 	}
+
 	return true;
 };
 
