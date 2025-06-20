@@ -531,7 +531,6 @@ const ExtensionInfo = ({
 			days: value.num,
 			state: isNew ? null : data.state,
 		};
-		console.log('sendLeaveData', sendLeaveData);
 		try {
 			// 紀錄請假
 			setMessage();
@@ -948,7 +947,6 @@ const OrderProductInfo = ({ collapsedItems, orderProducts, data, formFields }) =
 		const filterOrderProducts = orderProducts.filter(
 			(product) => !dayjs(product.ended_at).isSame(dayjs(productStartAt[product.id]), 'day')
 		);
-		console.log('filterOrderProducts : ', filterOrderProducts);
 		if (filterOrderProducts.length === 0) {
 			setLoading(false);
 			helpMessage({ error: true, content: '無訂單需要處理，若已修改過請重整畫面' });
@@ -998,7 +996,7 @@ const OrderProductInfo = ({ collapsedItems, orderProducts, data, formFields }) =
 			};
 			await sendAllBatches();
 		} catch (error) {
-			console.log(error);
+			console.error(error);
 			helpMessage({ error: true, content: `${JSON.stringify(error)}` });
 			console.error('訂單變更失敗:', error);
 		} finally {
@@ -1359,7 +1357,6 @@ const AdjustCoinInfo = ({ collapsedItems, item, data, setData, formFields }) => 
 			return;
 		}
 		const sendData = filterItem;
-		console.log('sendData : ', sendData);
 		try {
 			helpMessage();
 			let coinQuest = {
@@ -1440,7 +1437,6 @@ const AdjustCoinInfo = ({ collapsedItems, item, data, setData, formFields }) => 
 	);
 };
 const AdjustCoinRenderTable = ({ formFields, data, setData, collapsedItems, toggleCollapse }) => {
-	console.log('data : ', data);
 	return (
 		<TableContainer>
 			{data.length === 0 ? (

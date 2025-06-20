@@ -201,8 +201,6 @@ const RenderPage = () => {
 	const { messages, handleMessage } = useMessage();
 	const { member, updateMember } = useContext(AuthContext);
 
-	console.log(snapData);
-
 	const handleChange = (event) => {
 		const { name, value } = event.target;
 		setSnapData({ ...snapData, [name]: value });
@@ -220,7 +218,13 @@ const RenderPage = () => {
 			return;
 		}
 		try {
-			const options = { maxWidthOrHeight: 200, useWebWorker: true };
+			const options = {
+				maxSizeMB: 0.04, // 約 50KB
+				maxWidthOrHeight: 100,
+				useWebWorker: true,
+				initialQuality: 0.5, // 強制降畫質
+				fileType: 'image/jpeg', // 若想減少容量可用 jpeg
+			};
 			const compressedFile = await imageCompression(file, options);
 			const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
 			setSnapData({ ...snapData, comfirmImage: base64 });

@@ -199,7 +199,6 @@ function EditProject({ data }) {
 			sendData[d.key] = d.value;
 		});
 
-		console.log('sendData : ', sendData);
 		delete sendData.edited_at;
 		delete sendData.edited_by;
 		if (sendData.hasOwnProperty('id') && sendData.id.length === 0) {

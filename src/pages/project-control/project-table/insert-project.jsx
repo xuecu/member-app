@@ -26,7 +26,6 @@ function InsertProject() {
 
 	useEffect(() => {
 		resetData();
-		console.log(targetData);
 		handleMessage({ type: 'reset' });
 	}, []);
 	const resetData = () => {

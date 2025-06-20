@@ -76,7 +76,6 @@ function Menu() {
 
 			const result = await SafeFetch(() => SendRequest(getData), 'search not found');
 
-			console.log(result);
 			if (!result.success) throw new Error(result.message);
 
 			handleTab();
