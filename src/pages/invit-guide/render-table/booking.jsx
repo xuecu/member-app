@@ -163,10 +163,10 @@ function clearAvailability(raw, bookings) {
 }
 const weekCodeMap = ['日', '一', '二', '三', '四', '五', '六'];
 
-const BrandCopyButton = ({ brandName, data, monday, sunday }) => {
+const BrandCopyButton = ({ brandName, data, sunday, startTime }) => {
 	const handleCopy = async () => {
 		const filtered = data
-			.filter(({ dateTime }) => dayjs(dateTime).isBetween(monday, sunday, 'day', '[]'))
+			.filter(({ dateTime }) => dayjs(dateTime).isBetween(startTime, sunday, 'day', '[]'))
 			.map(({ dateTime, available }) => {
 				const timeSlots = available
 					.filter(({ mail }) =>
@@ -184,7 +184,7 @@ const BrandCopyButton = ({ brandName, data, monday, sunday }) => {
 			.filter(Boolean)
 			.join('\n');
 
-		const content = `📘 ${brandName}可預約時段：\n${filtered}`;
+		const content = `接下來我們會約一場課程導覽，想詢問以下的時間是否是方便的呢？\n\n${filtered}\n\n可以選個 4-5 個時段，導覽大約30-45分鐘的時間，選好後幫你確認確切的時間 ☺️\n同樣的時間也有學員在挑選，也希望可以盡快跟我們說，避免時間額滿\n`;
 
 		try {
 			await navigator.clipboard.writeText(content.trim());
@@ -327,26 +327,26 @@ function Booking() {
 				<BrandCopyButton
 					brandName="學米"
 					data={filterData}
-					monday={monday}
 					sunday={sunday}
-				/>
-				<BrandCopyButton
-					brandName="職能"
-					data={filterData}
-					monday={monday}
-					sunday={sunday}
+					startTime={startTime}
 				/>
 				<BrandCopyButton
 					brandName="無限"
 					data={filterData}
-					monday={monday}
 					sunday={sunday}
+					startTime={startTime}
+				/>
+				<BrandCopyButton
+					brandName="職能"
+					data={filterData}
+					sunday={sunday}
+					startTime={startTime}
 				/>
 				<BrandCopyButton
 					brandName="財經"
 					data={filterData}
-					monday={monday}
 					sunday={sunday}
+					startTime={startTime}
 				/>
 			</ContainerStyled>
 		</ContainerStyled>
