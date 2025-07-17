@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, Fragment } from 'react';
 import { InvitGuideContext } from '@/contexts/invit-guide.context';
 import Booking from './booking';
 import Calendar from './calendar';
+import MemberSetting from './member-setting';
 
 function RenderTable() {
 	const { tabList } = useContext(InvitGuideContext);
@@ -16,6 +17,7 @@ function RenderTable() {
 	}, [tabList]);
 
 	if (targetTab === 'booking') return <Booking />;
+	if (targetTab === 'memberSetting') return <MemberSetting />;
 	if (targetTab === 'calendar') return <Calendar />;
 
 	return <div>載入資料中</div>;

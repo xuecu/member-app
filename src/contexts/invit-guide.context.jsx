@@ -9,7 +9,8 @@ const defaultTab = [
 		name: '每日可預約',
 		isOpen: true,
 	},
-	{ id: 'calendar', name: '登記預約表', isOpen: false },
+	{ id: 'memberSetting', name: '登記預約表', isOpen: false },
+	{ id: 'calendar', name: '行事曆', isOpen: false },
 ];
 
 export const InvitGuideProvider = ({ children }) => {

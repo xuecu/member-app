@@ -5,9 +5,10 @@ import dayjs from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import isBetween from 'dayjs/plugin/isBetween';
 import styled, { css } from 'styled-components';
-import { SelectInput, TextInput } from '@/components/input';
+import { SelectInput, TextareaInput, TextInput } from '@/components/input';
 import { Loading, LoadingMessage, useMessage } from '@components/loading';
 import SendRequest from '@/utils/auth-service.utils';
+import { Link } from 'react-router-dom';
 
 dayjs.extend(isoWeek);
 dayjs.extend(isBetween);
@@ -22,13 +23,15 @@ const defaultForm = {
 	choiceMember: '',
 };
 
-function Modal({ data }) {
+function BookingModal({ data }) {
 	const { setBooking } = useContext(InvitGuideContext);
 	const { messages, handleMessage } = useMessage();
 
 	const [form, setForm] = useState({ ...defaultForm });
 	const [alert, setAlert] = useState('');
 	const [load, setLoad] = useState(false);
+	const [studentMessage, setStudentMessage] = useState('');
+	const [studentLineLink, setStudentLineLink] = useState('');
 
 	const memberList = Array.isArray(data.mail) ? data.mail : [];
 
@@ -39,6 +42,11 @@ function Modal({ data }) {
 
 	const handleSelectBrands = (event) => {
 		setForm((prev) => ({ ...prev, choiceBrand: event.target.value }));
+	};
+
+	const handleTextarea = (event) => {
+		const { value } = event.target;
+		setStudentMessage(value);
 	};
 
 	const handleSelectMember = (event) => {
@@ -96,7 +104,9 @@ function Modal({ data }) {
 			}
 			handleMessage({ type: 'single', content: `${result.message}` });
 			handleMessage({ type: 'success' });
-			setBooking(result.data);
+			setBooking(result.data.booking_Data);
+			setStudentMessage(result.data.to_student.studentBookingMessage);
+			setStudentLineLink(result.data.to_student.line_link);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -135,7 +145,7 @@ function Modal({ data }) {
 			<FromStyled>
 				<FromRow $row>
 					<TextInput
-						label="學員姓名"
+						label="學員信箱"
 						inputOption={{
 							type: 'text',
 							required: true,
@@ -175,7 +185,6 @@ function Modal({ data }) {
 					)}
 				</FromRow>
 			</FromStyled>
-
 			<ContainerStyled
 				$row
 				$justifyContent="center"
@@ -192,11 +201,33 @@ function Modal({ data }) {
 				</Button>
 			</ContainerStyled>
 			<LoadingMessage message={messages} />
+			<ContainerStyled>
+				{studentMessage && (
+					<ContainerStyled>
+						<Link
+							to={studentLineLink}
+							target="_blank"
+						>
+							LINE
+						</Link>
+						<TextareaInput
+							label="給學員的訊息"
+							inputOption={{
+								type: 'text',
+								disable: true,
+								name: 'studentMessage',
+								value: studentMessage,
+								onChange: handleTextarea,
+							}}
+						/>
+					</ContainerStyled>
+				)}
+			</ContainerStyled>
 		</ContainerStyled>
 	);
 }
 
-export default Modal;
+export default BookingModal;
 
 // Styled Components
 const containerStyles = css`

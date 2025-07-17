@@ -8,7 +8,7 @@ import isBetween from 'dayjs/plugin/isBetween';
 import styled, { css } from 'styled-components';
 import { Button } from 'antd';
 
-import Modal from './modal';
+import BookingModal from './booking-modal';
 
 dayjs.extend(isoWeek);
 dayjs.extend(isBetween);
@@ -246,7 +246,7 @@ function Booking() {
 		<ContainerStyled>
 			{isModalOpen && (
 				<LightBox onClose={() => handleModalClose()}>
-					<Modal data={modalData} />
+					<BookingModal data={modalData} />
 				</LightBox>
 			)}
 			<ContainerStyled
