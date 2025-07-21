@@ -2,14 +2,14 @@ import React, { useState, useEffect, useContext, Fragment, useRef } from 'react'
 import { InvitGuideContext } from '@/contexts/invit-guide.context';
 import dayjs from 'dayjs';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
-import { Button, Checkbox } from 'antd';
+import { Button, Checkbox, DatePicker } from 'antd';
 
 import styled, { css } from 'styled-components';
 import { TabButton } from '@/components/tab-button';
 import { LightBox } from '@/components/light-box';
 import SendRequest from '@utils/auth-service.utils';
 import { Loading, LoadingOverlay, LoadingMessage, useMessage } from '@components/loading';
-import { SelectInput, TextareaInput, TextInput } from '@/components/input';
+import { DateInput, SelectInput, TextareaInput, TextInput } from '@/components/input';
 const CheckboxGroup = Checkbox.Group;
 
 function NewMemberModal({ setGetMemberList, modalId = null }) {
@@ -269,9 +269,10 @@ function CalendarSetting() {
 					<FromRow $row>
 						<CellStyled>{weekend}</CellStyled>
 						{tempTargetMember.available &&
-							tempTargetMember.available[weekend].map(({ time, isValid }) => {
+							tempTargetMember.available[weekend].map(({ time, isValid }, key) => {
 								return (
 									<CellStyled
+										key={key}
 										$point
 										onClick={() => handleChangeOpen(weekend, time)}
 									>
@@ -295,27 +296,162 @@ function CalendarSetting() {
 		</FromStyled>
 	);
 }
-function EditSingleModal({ setGetMemberList }) {
-	return <div>個別時間</div>;
+
+function EditSingleModal({ setGetMemberList, modalId = null }) {
+	const { targetMember } = useContext(InvitGuideContext);
+	const { messages, handleMessage } = useMessage();
+
+	const [checkedList, setCheckedList] = useState([]);
+	const [load, setLoad] = useState(false);
+	const [date, setDate] = useState(null);
+	const defaultTime = ['13', '14', '15', '16', '17', '18', '19', '20'];
+	const checkAll = defaultTime.length === checkedList.length;
+	const indeterminate = checkedList.length > 0 && checkedList.length < defaultTime.length;
+
+	const disabledDate = (current) => {
+		return current && current < dayjs().subtract(1, 'd').endOf('day'); // 禁用今天及過去的日期
+	};
+	const handleDate = (value) => {
+		if (!value) return setDate(null);
+		setDate(dayjs(value));
+	};
+	const onChange = (list) => {
+		setCheckedList(list);
+	};
+	const onCheckAllChange = (e) => {
+		setCheckedList(e.target.checked ? defaultTime : []);
+	};
+
+	const reset = () => {
+		handleMessage({ type: 'reset' });
+		setDate(null);
+		if (!modalId) return;
+		setDate(dayjs(modalId));
+		setCheckedList(
+			targetMember.other[modalId].filter(({ isValid }) => isValid).map(({ time }) => time)
+		);
+	};
+
+	const submit = async () => {
+		if (!date) {
+			handleMessage({ type: 'reset' });
+			handleMessage({ type: 'error', content: `請輸入日期` });
+			return;
+		}
+		let dateString = '';
+		if (modalId) dateString = modalId;
+		else dateString = dayjs(date).format('YYYY-MM-DD');
+		handleMessage({ type: 'reset' });
+		const variables = {
+			isNew: modalId ? false : true,
+			excel_id: targetMember.excel_id,
+			dateString: dateString,
+			open: defaultTime.map((time) => ({
+				time: time,
+				isValid: checkedList.some((item) => item === time),
+			})),
+		};
+
+		const send = {
+			do: 'invitGuidePost', // invitGuideGet | invitGuidePost
+			what: 'editSingleTime',
+			variables: JSON.stringify(variables),
+			staffMail: JSON.parse(localStorage.getItem('memberApp')).mail,
+		};
+		handleMessage({ type: 'reset' });
+		try {
+			setLoad(true);
+			handleMessage({ type: 'single' });
+			const result = await SendRequest(send);
+			if (!result.success) {
+				handleMessage({ type: 'error', content: `${result.message}` });
+				throw new Error(`${result.message}`);
+			}
+			handleMessage({ type: 'single', content: `${result.message}` });
+			handleMessage({ type: 'success' });
+			setGetMemberList(result.data.invitMember);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoad(false);
+		}
+	};
+
+	useEffect(() => {
+		reset();
+	}, [modalId]);
+
+	return (
+		<FromStyled>
+			個別時間{' '}
+			<FromRow $row>
+				<label style={{ flex: '0', whiteSpace: 'nowrap' }}>日期</label>
+				<DatePicker
+					value={date ? date : ''}
+					onChange={handleDate}
+					disabledDate={disabledDate} // 加入日期禁用條件
+					disabled={modalId ? true : false}
+				/>
+			</FromRow>
+			<FromRow $row>
+				<Checkbox
+					indeterminate={indeterminate}
+					onChange={onCheckAllChange}
+					checked={checkAll}
+				>
+					全選
+				</Checkbox>
+				<CheckboxGroup
+					style={{ display: 'flex', flexWrap: 'nowrap', whiteSpace: 'nowrap' }}
+					options={defaultTime}
+					value={checkedList}
+					onChange={onChange}
+				/>
+			</FromRow>
+			<LoadingMessage message={messages} />
+			<FromRow $row>
+				<Button onClick={() => reset()}>{load ? <Loading /> : '重整'}</Button>
+				<Button
+					type="primary"
+					onClick={() => submit()}
+				>
+					{load ? <Loading /> : modalId ? '編輯' : '新增'}
+				</Button>
+			</FromRow>
+		</FromStyled>
+	);
 }
 
 function OtherSetting() {
-	const { targetMember } = useContext(InvitGuideContext);
+	const { targetMember, setMemberData } = useContext(InvitGuideContext);
 	const [isModalOpen, setIsModalOpen] = useState(false); // 控制 Lightbox 開關
 	const [getMemberList, setGetMemberList] = useState([]);
 	const [modalId, setModalId] = useState(null);
 	const filterKeysByDate = (obj) => {
 		const today = dayjs(new Date());
-		const filterKeys = Object.keys(obj).filter((key) => dayjs(key).diff(today, 'day') > -1);
+		const filterKeys = Object.keys(obj)
+			.filter((key) => dayjs(key).diff(today, 'day') > -1)
+			.sort((a, b) => new Date(a) - new Date(b));
 		return filterKeys;
 	};
+	const keyByTime = (key) => {
+		const value = targetMember.other[key];
+		if (!value.some(({ isValid }) => isValid)) return '不開放';
+		return `開放：${value
+			.filter(({ isValid }) => isValid)
+			.map(({ time }) => time)
+			.join('、')}`;
+	};
 	const handleModalClose = () => {
-		// if (getMemberList.length > 0) setMemberData(getMemberList);
+		if (getMemberList.length > 0) setMemberData(getMemberList);
 		setIsModalOpen(false);
 		setGetMemberList([]);
 		setModalId(null);
 	};
-
+	const handleModalOpen = (id) => {
+		setModalId(id);
+		setIsModalOpen(true);
+	};
 	return (
 		<Fragment>
 			{isModalOpen && (
@@ -340,11 +476,11 @@ function OtherSetting() {
 								style={{ gap: '20px' }}
 								$row
 							>
-								<div>{key}</div>
-								<div></div>
+								<div style={{ flex: '0', whiteSpace: 'nowrap' }}>{key}</div>
+								<div>{keyByTime(key)}</div>
 								<Button
 									style={{ flex: '0' }}
-									onClick={() => setIsModalOpen(true)}
+									onClick={() => handleModalOpen(key)}
 								>
 									<EditOutlined />
 								</Button>
