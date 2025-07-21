@@ -6,14 +6,15 @@ const targetTab = css`
 		content: '';
 		display: block;
 		width: calc(100% - 5px);
-		height: 4px;
-		border-top-right-radius: 10px;
-		border-top-left-radius: 10px;
-		background-color: #007bff;
+		height: 80%;
+		border-radius: 10px;
+		border: 1px solid #007bffb9;
 		position: absolute;
 		bottom: 0;
 		left: 50%;
-		transform: translateX(-50%);
+		top: 50%;
+
+		transform: translate(-50%, -50%);
 	}
 `;
 
@@ -21,6 +22,7 @@ const TabStyled = styled.div`
 	padding: 8px 15px;
 	position: relative;
 	display: inline-block;
+
 	cursor: pointer;
 	${({ $focus }) => $focus && targetTab}
 	${({ order }) => order && `order: ${order};`}
@@ -28,6 +30,7 @@ const TabStyled = styled.div`
 		color: #007bff;
 	}
 `;
-export const Tab = ({ children, ...otherProps }) => {
+
+export const TabButton = ({ children, ...otherProps }) => {
 	return <TabStyled {...otherProps}>{children}</TabStyled>;
 };

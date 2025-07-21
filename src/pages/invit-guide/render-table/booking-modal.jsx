@@ -13,7 +13,6 @@ import { Link } from 'react-router-dom';
 dayjs.extend(isoWeek);
 dayjs.extend(isBetween);
 
-const weekCodeMap = ['日', '一', '二', '三', '四', '五', '六'];
 const defaultForm = {
 	student: '',
 	choiceBrand: '',
@@ -23,8 +22,8 @@ const defaultForm = {
 	choiceMember: '',
 };
 
-function BookingModal({ data }) {
-	const { setBooking } = useContext(InvitGuideContext);
+function BookingModal({ data, setTempBookingData }) {
+	const { weekCode } = useContext(InvitGuideContext);
 	const { messages, handleMessage } = useMessage();
 
 	const [form, setForm] = useState({ ...defaultForm });
@@ -32,6 +31,8 @@ function BookingModal({ data }) {
 	const [load, setLoad] = useState(false);
 	const [studentMessage, setStudentMessage] = useState('');
 	const [studentLineLink, setStudentLineLink] = useState('');
+	const [memberMessage, setMemberMessage] = useState('');
+	const [memberLineLink, setMemberLineLink] = useState('');
 
 	const memberList = Array.isArray(data.mail) ? data.mail : [];
 
@@ -44,9 +45,13 @@ function BookingModal({ data }) {
 		setForm((prev) => ({ ...prev, choiceBrand: event.target.value }));
 	};
 
-	const handleTextarea = (event) => {
+	const handleStudentTextarea = (event) => {
 		const { value } = event.target;
 		setStudentMessage(value);
+	};
+	const handleMemberTextarea = (event) => {
+		const { value } = event.target;
+		setMemberMessage(value);
 	};
 
 	const handleSelectMember = (event) => {
@@ -104,9 +109,12 @@ function BookingModal({ data }) {
 			}
 			handleMessage({ type: 'single', content: `${result.message}` });
 			handleMessage({ type: 'success' });
-			setBooking(result.data.booking_Data);
+			console.log(result.data);
 			setStudentMessage(result.data.to_student.studentBookingMessage);
 			setStudentLineLink(result.data.to_student.line_link);
+			setMemberMessage(result.data.to_member.memberBookingMessage);
+			setMemberLineLink(result.data.to_member.line_link);
+			setTempBookingData(result.data.booking_Data);
 		} catch (error) {
 			console.error(error);
 		} finally {
@@ -116,7 +124,7 @@ function BookingModal({ data }) {
 
 	useEffect(() => {
 		resetData();
-	}, [data]);
+	}, []);
 
 	useEffect(() => {
 		AlertMessage();
@@ -139,9 +147,7 @@ function BookingModal({ data }) {
 
 	return (
 		<ContainerStyled>
-			{`${data.date} (${weekCodeMap[dayjs(data.date).day()]}) ${data.start}:00 - ${
-				data.end
-			}:00`}
+			{`${weekCode(data.date)} ${data.start}:00 - ${data.end}:00`}
 			<FromStyled>
 				<FromRow $row>
 					<TextInput
@@ -204,12 +210,15 @@ function BookingModal({ data }) {
 			<ContainerStyled>
 				{studentMessage && (
 					<ContainerStyled>
-						<Link
-							to={studentLineLink}
-							target="_blank"
-						>
-							LINE
-						</Link>
+						<div>
+							給學員的訊息
+							<Link
+								to={studentLineLink}
+								target="_blank"
+							>
+								LINE
+							</Link>
+						</div>
 						<TextareaInput
 							label="給學員的訊息"
 							inputOption={{
@@ -217,7 +226,30 @@ function BookingModal({ data }) {
 								disable: true,
 								name: 'studentMessage',
 								value: studentMessage,
-								onChange: handleTextarea,
+								onChange: handleStudentTextarea,
+							}}
+						/>
+					</ContainerStyled>
+				)}
+				{memberMessage && (
+					<ContainerStyled>
+						<div>
+							給人員的訊息
+							<Link
+								to={memberLineLink}
+								target="_blank"
+							>
+								LINE
+							</Link>
+						</div>
+						<TextareaInput
+							label="給人員的訊息"
+							inputOption={{
+								type: 'text',
+								disable: true,
+								name: 'memberMessage',
+								value: memberMessage,
+								onChange: handleMemberTextarea,
 							}}
 						/>
 					</ContainerStyled>

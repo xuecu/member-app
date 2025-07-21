@@ -66,7 +66,7 @@ const Timer = () => {
 				onChange={onChange}
 				disabledDate={disabledDate} // 加入日期禁用條件
 			/>
-			<Button onClick={() => submit()}>{load ? <Loading /> : '查詢'}</Button>
+			<Button onClick={() => submit()}>{load ? <Loading /> : '重新查詢'}</Button>
 			<LoadingMessage message={messages} />
 		</FlexContainer>
 	);

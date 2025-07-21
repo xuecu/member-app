@@ -206,16 +206,19 @@ const defaultModalData = {
 };
 
 function Booking() {
-	const { startTime, memberData, booking } = useContext(InvitGuideContext);
+	const { startTime, memberData, booking, setBooking } = useContext(InvitGuideContext);
 	const [filterData, setFilterData] = useState([]);
 	const [monday, setMonday] = useState(getMonday(startTime));
 	const [sunday, setSunday] = useState(monday.add(6, 'd'));
 	const [isModalOpen, setIsModalOpen] = useState(false); // 控制 Lightbox 開關
 	const [modalData, setModalData] = useState(defaultModalData);
+	const [tempBookingData, setTempBookingData] = useState([]);
 
 	const handleModalClose = () => {
+		if (tempBookingData.length > 0) setBooking(tempBookingData);
 		setIsModalOpen(false);
 		setModalData(defaultModalData);
+		setTempBookingData([]);
 	};
 	const handleSetModal = ({ date, start, end, mail }) => {
 		setModalData((prev) => {
@@ -223,7 +226,6 @@ function Booking() {
 		});
 		setIsModalOpen(true);
 	};
-	console.log(filterData);
 
 	useEffect(() => {
 		const availabilityData = convertAvailability(memberData, monday);
@@ -239,14 +241,16 @@ function Booking() {
 	const mondayHandler = (e) => {
 		setMonday(monday.add(e, 'd'));
 		setSunday(sunday.add(e, 'd'));
-		console.log('sunday', sunday);
 	};
 
 	return (
 		<ContainerStyled>
 			{isModalOpen && (
 				<LightBox onClose={() => handleModalClose()}>
-					<BookingModal data={modalData} />
+					<BookingModal
+						data={modalData}
+						setTempBookingData={setTempBookingData}
+					/>
 				</LightBox>
 			)}
 			<ContainerStyled
