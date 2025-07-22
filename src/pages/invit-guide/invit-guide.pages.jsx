@@ -32,9 +32,6 @@ const RenderPage = () => {
 
 function InvitGuide() {
 	const { memberData } = useContext(InvitGuideContext);
-	const { auth } = useContext(AuthContext);
-	if (auth.hasOwnProperty('router'))
-		if (!auth.router.includes('invit-guide')) return <div>無權限</div>;
 
 	const LoadingCheck = () => {
 		return (
