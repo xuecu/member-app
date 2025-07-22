@@ -383,7 +383,6 @@ function EditSingleModal({ setGetMemberList, modalId = null }) {
 
 	return (
 		<FromStyled>
-			個別時間{' '}
 			<FromRow $row>
 				<label style={{ flex: '0', whiteSpace: 'nowrap' }}>日期</label>
 				<DatePicker
@@ -422,9 +421,64 @@ function EditSingleModal({ setGetMemberList, modalId = null }) {
 	);
 }
 
+function DelSingleModal({ setGetMemberList, modalId }) {
+	const { targetMember } = useContext(InvitGuideContext);
+	const { messages, handleMessage } = useMessage();
+	const [load, setLoad] = useState(false);
+
+	const submit = async () => {
+		const variables = {
+			excel_id: targetMember.excel_id,
+			dateString: modalId,
+		};
+
+		const send = {
+			do: 'invitGuidePost', // invitGuideGet | invitGuidePost
+			what: 'delSingleTime',
+			variables: JSON.stringify(variables),
+			staffMail: JSON.parse(localStorage.getItem('memberApp')).mail,
+		};
+		handleMessage({ type: 'reset' });
+		try {
+			setLoad(true);
+			handleMessage({ type: 'single' });
+			const result = await SendRequest(send);
+			if (!result.success) {
+				handleMessage({ type: 'error', content: `${result.message}` });
+				throw new Error(`${result.message}`);
+			}
+			handleMessage({ type: 'single', content: `${result.message}` });
+			handleMessage({ type: 'success' });
+			setGetMemberList(result.data.invitMember);
+		} catch (error) {
+			console.error(error);
+		} finally {
+			setLoad(false);
+		}
+	};
+
+	return (
+		<FromStyled>
+			<FromRow>{modalId}</FromRow>
+			<FromRow>請確認是否刪除，刪除後不可以還原</FromRow>
+			<LoadingMessage message={messages} />
+			<FromRow $row>
+				<Button
+					color="danger"
+					variant="solid"
+					onClick={() => submit()}
+				>
+					{load ? <Loading /> : '刪除'}
+				</Button>
+			</FromRow>
+		</FromStyled>
+	);
+}
+
 function OtherSetting() {
 	const { targetMember, setMemberData } = useContext(InvitGuideContext);
 	const [isModalOpen, setIsModalOpen] = useState(false); // 控制 Lightbox 開關
+	const [delModalOpen, setDelModalOpen] = useState(false); // 控制 Lightbox 開關
 	const [getMemberList, setGetMemberList] = useState([]);
 	const [modalId, setModalId] = useState(null);
 	const filterKeysByDate = (obj) => {
@@ -452,11 +506,29 @@ function OtherSetting() {
 		setModalId(id);
 		setIsModalOpen(true);
 	};
+	const handleDelModalClose = () => {
+		if (getMemberList.length > 0) setMemberData(getMemberList);
+		setDelModalOpen(false);
+		setGetMemberList([]);
+		setModalId(null);
+	};
+	const handleDelModalOpen = (id) => {
+		setModalId(id);
+		setDelModalOpen(true);
+	};
 	return (
 		<Fragment>
 			{isModalOpen && (
 				<LightBox onClose={() => handleModalClose()}>
 					<EditSingleModal
+						setGetMemberList={setGetMemberList}
+						modalId={modalId}
+					/>
+				</LightBox>
+			)}
+			{delModalOpen && (
+				<LightBox onClose={() => handleDelModalClose()}>
+					<DelSingleModal
 						setGetMemberList={setGetMemberList}
 						modalId={modalId}
 					/>
@@ -484,7 +556,10 @@ function OtherSetting() {
 								>
 									<EditOutlined />
 								</Button>
-								<Button style={{ flex: '0' }}>
+								<Button
+									style={{ flex: '0' }}
+									onClick={() => handleDelModalOpen(key)}
+								>
 									<DeleteOutlined style={{ color: '#ff337a' }} />
 								</Button>
 							</FromRow>
@@ -496,9 +571,6 @@ function OtherSetting() {
 }
 
 function MemberSetting() {
-	const { targetMember } = useContext(InvitGuideContext);
-
-	console.log('targetMember : ', targetMember);
 	return (
 		<ContainerStyled>
 			<RenderTab />
