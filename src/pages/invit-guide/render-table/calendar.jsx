@@ -22,8 +22,6 @@ function Modal({ setGetBookingList, modalId }) {
 		.filter((item) => item !== 'learnwell@teachcake.com')[0];
 	const targetMember = memberData.find(({ mail }) => mail === memberMail);
 
-	console.log(targetBooking);
-
 	const deletedFunc = async () => {
 		const variables = { eventId: modalId };
 		setClipboardMessage('');
@@ -222,8 +220,6 @@ function CalendarSetting() {
 	};
 	const { filterSuccess, filterError } = selectedData(selectedDate);
 
-	console.log('memberData : ', memberData);
-	console.log('booking : ', booking);
 	return (
 		<ContainerStyled>
 			{isModalOpen && (
@@ -261,7 +257,6 @@ function CalendarSetting() {
 				{filterSuccess.length > 0 ? (
 					<FromStyled>
 						{filterSuccess.map((item) => {
-							console.log(item);
 							return (
 								<FromRowList
 									key={item.id}
@@ -279,7 +274,6 @@ function CalendarSetting() {
 				{filterError.length > 0 ? (
 					<FromStyled>
 						{filterError.map((item) => {
-							console.log(item);
 							return (
 								<FromRowList
 									$fail
