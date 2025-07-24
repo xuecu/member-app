@@ -43,6 +43,7 @@ function Modal({ setGetBookingList, modalId }) {
 			}
 			handleMessage({ type: 'single', content: `${result.message}` });
 			handleMessage({ type: 'success' });
+			console.log(result.data.booking);
 			setGetBookingList(result.data.booking);
 		} catch (error) {
 			console.error(error);
@@ -152,7 +153,6 @@ function CalendarSetting() {
 
 	const [value, setValue] = useState(() => dayjs());
 	const [selectedDate, setSelectedDate] = useState(() => dayjs());
-
 	const handleModalClose = () => {
 		if (getBookingList.length > 0) setBooking(getBookingList);
 		setIsModalOpen(false);
@@ -225,7 +225,7 @@ function CalendarSetting() {
 			{isModalOpen && (
 				<LightBox onClose={() => handleModalClose()}>
 					<Modal
-						setGetMemberList={setGetBookingList}
+						setGetBookingList={setGetBookingList}
 						modalId={modalId}
 					/>
 				</LightBox>
