@@ -49,7 +49,7 @@ function NewMemberModal({ setGetMemberList, modalId = null }) {
 			handleMessage({ type: 'error', content: `請輸入完整資料` });
 			return;
 		}
-		const variables = { ...form, brands: [...checkedList] };
+		const variables = { ...form, mail: form.mail.trim(), brands: [...checkedList] };
 		if (modalId) variables.id = modalId;
 		const send = {
 			do: 'invitGuidePost', // invitGuideGet | invitGuidePost

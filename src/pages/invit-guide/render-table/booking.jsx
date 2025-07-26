@@ -226,7 +226,7 @@ function Booking() {
 		});
 		setIsModalOpen(true);
 	};
-
+	console.log(filterData);
 	useEffect(() => {
 		const availabilityData = convertAvailability(memberData, monday);
 
