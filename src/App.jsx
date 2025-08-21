@@ -8,12 +8,14 @@ import { Plugin, ProjectControl, Admin, Member, MemberChange, Login, DefaultLayo
 import { MemberChangeMenuProvider } from '@contexts/member-change-menu.contexts';
 import { ProjectControlProvider } from '@contexts/project-control.context';
 import { InvitGuideProvider } from '@contexts/invit-guide.context';
+import { AdminProvider } from '@contexts/admin.context';
 
 
 function App() {
 	const memberChangeProvider = [MemberChangeMenuProvider]
 	const projectControlProvider = [ProjectControlProvider]
 	const invitGuideProvider = [InvitGuideProvider]
+	const adminProvider = [AdminProvider]
 
 
 	const withProtectedRoute = ({element, providers=[]}) => {
@@ -37,7 +39,7 @@ function App() {
 					<Route path="plugin" element={withProtectedRoute({ element: <Plugin /> })} />
 					<Route path="member" element={withProtectedRoute({ element: <Member /> })} />
 					<Route path="member-change" element={withProtectedRoute({ element: <MemberChange />, providers: memberChangeProvider })} />
-					<Route path="admin" element={withProtectedRoute({ element: <Admin /> })} />
+					<Route path="admin" element={withProtectedRoute({ element: <Admin />, providers: adminProvider })} />
 					<Route path="project-control" element={withProtectedRoute({ element: <ProjectControl />, providers: projectControlProvider })} />
 					<Route path="invit-guide" element={withProtectedRoute({ element: <InvitGuide /> , providers: invitGuideProvider })} />
 				</Route>

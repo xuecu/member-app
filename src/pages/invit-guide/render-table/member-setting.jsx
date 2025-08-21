@@ -78,7 +78,7 @@ function NewMemberModal({ setGetMemberList, modalId = null }) {
 	return (
 		<FromStyled>
 			<TextInput
-				label="暱稱"
+				label="姓名"
 				inputOption={{
 					type: 'text',
 					required: true,
